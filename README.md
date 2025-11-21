@@ -1,60 +1,92 @@
-# cf_ai_edge_study_buddy
+# Edge Study Buddy — Cloudflare AI Agent
 
-AI-powered **Study Buddy** built on top of **Cloudflare Agents**, **Workers AI** and **Durable Objects**.
+This project is an AI-powered study assistant built using **Cloudflare Workers**, **Workers AI**, **Durable Objects**, and the **Agents SDK**.  
+It is designed for the Cloudflare Software Engineering Internship assignment (cf_ai\_ prefix requirement).
 
-The agent helps users:
-- define and store their study profile (goals, preferred schedule),
-- create and track study tasks,
-- list and mark tasks as done,
-- schedule future reminders using Cloudflare's scheduling capabilities.
+The agent provides:
 
-This project was built for the Cloudflare AI internship optional assignment.
-
----
-
-## Architecture
-
-- **LLM**: `@cf/meta/llama-3.3-70b-instruct-fp8-fast` on Workers AI.
-- **Agent Runtime**: Cloudflare Agents SDK running on Durable Objects.
-- **Workflow / Coordination**:
-  - Tools for adding/listing tasks and saving the study profile.
-  - Scheduling tool to create future reminders (Agent `schedule` + `onTask`).
-- **State / Memory**:
-  - Study profile and tasks are stored in the Agent state (`setState` / `getState`).
-- **User Input**:
-  - React-based chat UI using WebSockets (from `agents-starter` template).
+✅ Real-time chat using Workers & Durable Objects  
+✅ Persistent memory (study profile + tasks)  
+✅ AI-powered reasoning using **Llama 3.3 70B on Workers AI**  
+✅ Tools for storing structured data  
+✅ Scheduled reminders using agent scheduling  
+✅ Fully serverless architecture running at the edge  
 
 ---
 
-## Prerequisites
+## 🚀 Features
 
-- Node.js (LTS)
-- npm
-- Git
-- Cloudflare account with Workers & Workers AI enabled
-- `wrangler` CLI
+### **1. Study Profile Memory**
+The agent saves:
+- name  
+- long-term study goals  
+- preferred study schedule  
+
+Example:
+My name is Marcus and I want to prepare for a Java internship.
+
+### **2. Task Management**
+The agent can:
+- add study tasks  
+- list tasks  
+- store tasks persistently in the Agent’s state  
+
+Example:
+Add a study task: review Java OOP concepts tomorrow.
+List my study tasks.
+
+### **3. Scheduled Study Reminders**
+Using `agent.schedule()` + Durable Objects, the chatbot can trigger future messages.
+
+Example:
+Schedule a study reminder in 20 seconds: "Start your Java practice!"
+After 20 seconds, the agent automatically sends:
+Running scheduled task: Reminder: Start your Java practice!
+
+
+### **4. Edge-Optimized Real-Time UI**
+The frontend (Vite + React):
+- streams tokens live  
+- renders tool calls  
+- displays scheduling events  
+- saves connection state  
 
 ---
 
-## Getting Started
+## 🧱 Architecture Overview
 
-### 1. Clone this repository
+Frontend (Vite + React + Agents React SDK)
+│
+▼
+Cloudflare Worker (server.ts)
+│
+├── AI model: Llama 3.3 (Workers AI)
+├── Tools (tools.ts)
+│ ├── saveStudyProfile
+│ ├── addStudyTask
+│ ├── listStudyTasks
+│ └── scheduleStudyReminder
+│
+└── Durable Object (Agent)
+├── State (profile, tasks)
+└── Scheduled tasks
 
-```bash
-git clone https://github.com/SEU_USUARIO/cf_ai_edge_study_buddy.git
-cd cf_ai_edge_study_buddy
+src/
+├── server.ts → Main Worker + Agent routing + AI model
+├── tools.ts → All tools (memory, tasks, scheduling)
+├── client.tsx → Agent connection
+├── app.tsx → UI
+└── components/ → UI components
 
 
-How it works (high level)
+---
 
-The React front-end (from the agents-starter template) connects to the Agent via WebSockets.
+## 🛠 Installation
 
-Each message you send is forwarded to the StudyBuddyAgent on the server.
+### **1. Clone the repository**
 
-The Agent calls Workers AI using the workers-ai-provider and the Llama 3.3 model.
+### **2. Install dependencies**
 
-The Agent exposes tools (saveStudyProfile, addStudyTask, listStudyTasks, scheduleStudyReminder).
+### **3. Run Locally (npm start)**
 
-The model can call these tools to persist state in the Agent (study profile, tasks, reminders).
-
-The Agent uses Cloudflare's scheduling to trigger reminders in the future, updating state again.
+- http://localhost:5173/
